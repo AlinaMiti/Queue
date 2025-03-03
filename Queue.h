@@ -1,67 +1,74 @@
 #include <iostream>
 
 template <typename T>
-class Queue{
+class QueueArr{
 private:
     T* _array;
     T _top;
-    size_t _size;
-    size_t _startId;
-    size_t _finId;
-    int _cnt;
+    int _size;   //кол-во элементов в массиве
+    int _startIndex;
+    int _endIndex;
 public:
-    Queue(size_t size = 25){
+    QueueArr(int size = 25){
         _array = new T[size];
-        _size = 25;
-        _startId = 0;
-        _finId = 0;
-        _cnt = 0;
+        _size = size;
+        _startIndex = -1;
+        _endIndex = -1;
     }
+
+    ~QueueArr(){
+        delete [] _array;
+    }
+
     void Push(const T& elem){
-        if(_finId + 1 != _size){
-            _array[_finId] = elem;
-            _finId++;
-            _size++;
+        if(!Full()){
+            _array[(++_endIndex)%_size] = elem;
+
         }
-        else{
-            throw "polni";
-        }
-        // if(empty){
-        //     _array[0] = elem;
-        //     _size ++;
-        //     _cnt ++;
-        // }
-        // else{
-        //     _array[_cnt] = elem;
-        //     _cnt++;
-        // }
+        else{ throw "Queue is full"}
+
     }
-    T Pop(){
+
+    void Pop(){
         if(Empty()){
             throw "Queue is empty";
         }
-        T a = _array[_startId++];
-        if(_startId == _finId){
-            _startId = 0;
-            _finId = 0;
+        _startIndex = (_startIndex + 1) % _size;
+        
+    }
+    bool Full() const{
+        return (_endIndex + 1) % _size == _startIndex;
+        
+    }
+    bool Empty() const{
+        return _endIndex == _startIndex;
+    }
+    size_t GetCount() const{    //кол-во элементов в очереди
+        if(_endIndex > _startIndex){
+            return _endIndex - _startIndex;
         }
-        return a;
+        else{ return _size -_startIndex +_endIndex}
     }
-    bool Empty(){
-        if(_finId == 0){
-            return true;
-        }
-        return false;
-    }
-    size_t GetSize(){
-        return _finId = _startId;
-    }
-
     T& Front(){
-        return _array[_startId];
+        return _array[_startIndex];
+    }
+    const T& Front() const{
+        return _array[_startIndex];
     }
     T& Back(){
-        return _array[_finId];
+        return _array[_endIndex];
+    }
+    size_t GetSize(){
+        return _endIndex = _startIndex;
+    }
+    T& Front(){
+        return _array[_startIndex];
+    }
+    T& Back(){
+        return _array[_endIndex];
+    }
+    const T& Back() const{
+        return _array[_endIndex];
     }
 
 };
